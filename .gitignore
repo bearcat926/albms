@@ -24,7 +24,7 @@ hs_err_pid*
 
 
 **/target/
-**/test/**
+# **/test/**
 **/.idea/
 *.iml
 **/dist/

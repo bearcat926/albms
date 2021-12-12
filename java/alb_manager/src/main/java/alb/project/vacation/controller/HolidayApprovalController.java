@@ -59,7 +59,7 @@ public class HolidayApprovalController extends BaseController {
      */
     @GetMapping("/roleList")
     @PreAuthorize("@ss.hasPermi('vacation:holidayApproval:list')")
-    public AjaxResult queryHolidayApproval() {
+    public AjaxResult queryHolidayApprovalList() {
         return AjaxResult.success(this.holidayApprovalService.selectRoleList());
     }
 

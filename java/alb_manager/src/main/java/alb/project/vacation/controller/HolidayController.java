@@ -23,7 +23,6 @@ import alb.project.vacation.service.IHolidayItemService;
 import alb.project.vacation.service.IHolidayService;
 import cn.hutool.core.util.IdUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -59,7 +58,7 @@ public class HolidayController extends BaseController {
      * @return 实例对象
      */
     @GetMapping("/{holidayId}")
-    @PreAuthorize("@ss.hasPermi('vacation:holiday:query')")
+    // @PreAuthorize("@ss.hasPermi('vacation:holiday:query')")
     public AjaxResult queryHoliday(@PathVariable("holidayId") Long holidayId) {
         Holiday result = this.holidayService.queryOne(holidayId);
         return result != null ? AjaxResult.success(result) : AjaxResult.error();
@@ -72,7 +71,7 @@ public class HolidayController extends BaseController {
      * @return 实例对象
      */
     @GetMapping("/next/{holidayId}")
-    @PreAuthorize("@ss.hasPermi('vacation:holiday:query')")
+    // @PreAuthorize("@ss.hasPermi('vacation:holiday:query')")
     public AjaxResult hasNext(@PathVariable("holidayId") Long holidayId) {
         Holiday holiday = this.holidayService.queryOne(holidayId);
         // 默认取第一个角色
@@ -92,7 +91,7 @@ public class HolidayController extends BaseController {
      * @return
      */
     @GetMapping("/list")
-    @PreAuthorize("@ss.hasPermi('vacation:holiday:list')")
+    // @PreAuthorize("@ss.hasPermi('vacation:holiday:list')")
     public TableDataInfo queryList(Holiday holiday) {
         LoginUser loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
         if (!loginUser.getPermissions().contains(PermissionService.ALL_PERMISSION)) {
@@ -110,7 +109,7 @@ public class HolidayController extends BaseController {
      * @return
      */
     @GetMapping("/approvalList")
-    @PreAuthorize("@ss.hasPermi('vacation:holiday:list')")
+    // @PreAuthorize("@ss.hasPermi('vacation:holiday:list')")
     public TableDataInfo queryApprovalList(Holiday holiday) {
         LoginUser loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
         if (!loginUser.getPermissions().contains(PermissionService.ALL_PERMISSION)) {
@@ -128,7 +127,7 @@ public class HolidayController extends BaseController {
      * @return
      */
     @GetMapping("/user/list")
-    @PreAuthorize("@ss.hasPermi('vacation:holiday:list')")
+    // @PreAuthorize("@ss.hasPermi('vacation:holiday:list')")
     public AjaxResult queryUserList(Holiday holiday) {
         if (holiday.getHolidayId() != null) { // 审批阶段查询
             List<HolidayUserResultVO> result = new ArrayList<>();
@@ -189,7 +188,7 @@ public class HolidayController extends BaseController {
      * @return 实例对象
      */
     @PostMapping("")
-    @PreAuthorize("@ss.hasPermi('vacation:holiday:add')")
+    // @PreAuthorize("@ss.hasPermi('vacation:holiday:add')")
     @Log(title = "假期", businessType = BusinessType.INSERT)
     public AjaxResult addHoliday(@RequestBody Holiday holiday) {
         LoginUser loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
@@ -228,7 +227,7 @@ public class HolidayController extends BaseController {
      * @return 实例对象
      */
     @PutMapping("")
-    @PreAuthorize("@ss.hasPermi('vacation:holiday:edit')")
+    // @PreAuthorize("@ss.hasPermi('vacation:holiday:edit')")
     @Log(title = "假期", businessType = BusinessType.UPDATE)
     public AjaxResult modifyHoliday(@RequestBody Holiday holiday) {
         // 保存当前审批事项
@@ -272,7 +271,7 @@ public class HolidayController extends BaseController {
      * @return 是否成功
      */
     @DeleteMapping("/{holidayId}")
-    @PreAuthorize("@ss.hasPermi('vacation:holiday:delete')")
+    // @PreAuthorize("@ss.hasPermi('vacation:holiday:delete')")
     @Log(title = "假期", businessType = BusinessType.DELETE)
     public AjaxResult deleteById(@PathVariable("holidayId") Long holidayId) {
         int count = this.holidayService.deleteById(holidayId);
