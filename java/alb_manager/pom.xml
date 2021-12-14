@@ -324,7 +324,7 @@
             <version>20170516</version>
         </dependency>
 
-        <!-- Junit 测试 -->
+        <!-- Junit Testing -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>

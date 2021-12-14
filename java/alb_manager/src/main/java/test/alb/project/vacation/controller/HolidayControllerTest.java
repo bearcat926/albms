@@ -58,6 +58,7 @@ import java.util.concurrent.TimeUnit;
 public class HolidayControllerTest {
 
     /* Services */
+
     @Autowired
     private WebApplicationContext context;
 
@@ -72,6 +73,7 @@ public class HolidayControllerTest {
     SecurityContext ctx;
 
     /* params */
+
     @Value("${token.secret}")
     private String secret;
 
@@ -83,6 +85,7 @@ public class HolidayControllerTest {
     protected static final long MILLIS_MINUTE = 60 * MILLIS_SECOND;
 
     /* Model */
+
     private MockMvc mvc;
 
     private String token;
@@ -148,7 +151,7 @@ public class HolidayControllerTest {
      */
     @Test
     public void test2QueryList() throws Exception {
-        Long holidayTypeId = 33L;
+        Long holidayTypeId = 31L;
 
         MockHttpServletResponse response = mvc.perform(MockMvcRequestBuilders
                 .get("/vacation/holiday/list")
@@ -175,7 +178,7 @@ public class HolidayControllerTest {
      */
     @Test
     public void test3QueryApprovalList() throws Exception {
-        Long holidayTypeId = 33L;
+        Long holidayTypeId = 31L;
 
         MockHttpServletResponse response = mvc.perform(MockMvcRequestBuilders
                 .get("/vacation/holiday/approvalList")
@@ -204,7 +207,7 @@ public class HolidayControllerTest {
     public void test4QueryUserList() throws Exception {
         login(RoleType.STAFF);
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        params.add("holidayTypeId", "33");
+        params.add("holidayTypeId", "31");
         params.add("currentApprovedIndex", "1");
 
         MockHttpServletResponse response = mvc.perform(MockMvcRequestBuilders
@@ -232,7 +235,7 @@ public class HolidayControllerTest {
         login(RoleType.STAFF);
 
         Holiday mock = Holiday.builder()
-                .holidayTypeId(33L)
+                .holidayTypeId(31L)
                 .holidayStartDate(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2021-12-01 08:00:00"))
                 .holidayEndDate(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2021-12-01 18:00:00"))
                 .currentApproverId(3L) // James
@@ -260,7 +263,7 @@ public class HolidayControllerTest {
      */
     @Test
     public void test6HasNext() throws Exception {
-        Long holidayTypeId = 33L;
+        Long holidayTypeId = 31L;
         Long mock = getMockId(holidayTypeId);
 
         mvc.perform(MockMvcRequestBuilders
@@ -279,13 +282,13 @@ public class HolidayControllerTest {
      */
     @Test
     public void test7ModifyHoliday() throws Exception {
-        Long holidayTypeId = 33L;
+        Long holidayTypeId = 31L;
         Long mockId = getMockId(holidayTypeId);
 
         login(RoleType.MANAGER);
         Holiday mock = Holiday.builder()
                 .holidayId(mockId)
-                .holidayTypeId(33L)
+                .holidayTypeId(31L)
                 .currentApprovedIndex(1)
                 .proposerId(2L) // Olajuwon
                 .currentApproverId(4L) // Jordan
@@ -311,7 +314,7 @@ public class HolidayControllerTest {
         login(RoleType.BOSS);
         mock = Holiday.builder()
                 .holidayId(mockId)
-                .holidayTypeId(33L)
+                .holidayTypeId(31L)
                 .currentApprovedIndex(2)
                 .proposerId(2L) // Olajuwon
                 .status(1)
@@ -338,7 +341,7 @@ public class HolidayControllerTest {
      */
     @Test
     public void test8DeleteById() throws Exception {
-        Long holidayTypeId = 33L;
+        Long holidayTypeId = 31L;
         Long mockId = getMockId(holidayTypeId);
 
         mvc.perform(MockMvcRequestBuilders
