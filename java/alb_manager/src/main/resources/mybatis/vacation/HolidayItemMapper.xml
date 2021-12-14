@@ -146,7 +146,7 @@
     <!--通过主键删除-->
     <delete id="deleteById">
         update holiday_item
-        set del_flag =w 1
+        set del_flag = 1
         where holiday_id = #{holidayId}
     </delete>
 
