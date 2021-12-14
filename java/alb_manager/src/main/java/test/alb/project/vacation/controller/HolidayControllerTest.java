@@ -2,34 +2,20 @@ package test.alb.project.vacation.controller;
 
 import alb.StartApplication;
 import alb.common.constant.Constants;
-import alb.common.exception.CustomException;
-import alb.common.exception.user.CaptchaException;
-import alb.common.exception.user.CaptchaExpireException;
-import alb.common.exception.user.UserPasswordNotMatchException;
 import alb.common.utils.IdUtils;
-import alb.common.utils.MessageUtils;
-import alb.common.utils.ServletUtils;
 import alb.common.utils.ip.AddressUtils;
-import alb.common.utils.ip.IpUtils;
-import alb.framework.manager.AsyncManager;
-import alb.framework.manager.factory.AsyncFactory;
 import alb.framework.redis.RedisCache;
 import alb.framework.security.LoginUser;
-import alb.framework.security.service.SysLoginService;
-import alb.framework.security.service.TokenService;
 import alb.project.vacation.domain.Holiday;
-import alb.project.vacation.resultVO.HolidayUserResultVO;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -37,7 +23,6 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -53,13 +38,8 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.context.WebApplicationContext;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -74,14 +54,12 @@ import java.util.concurrent.TimeUnit;
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = StartApplication.class,
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class HolidayControllerTest {
 
     /* Services */
     @Autowired
     private WebApplicationContext context;
-
-    @Autowired
-    private TokenService tokenService;
 
     @Resource
     private AuthenticationManager authenticationManager;
@@ -138,7 +116,7 @@ public class HolidayControllerTest {
      * Method: queryHoliday(@PathVariable("holidayId") Long holidayId)
      */
     @Test
-    public void testQueryHoliday() throws Exception {
+    public void test1QueryHoliday() throws Exception {
         Long mock = 1463543151288520704L;
 
         /*
@@ -151,36 +129,11 @@ public class HolidayControllerTest {
          *   比如此处使用MockMvcResultHandlers.print()输出整个响应结果信息。
          * 7、ResultActions.andReturn表示执行完成后返回相应的结果。
          */
-        /*MockHttpServletResponse response = */mvc.perform(MockMvcRequestBuilders
+        mvc.perform(MockMvcRequestBuilders
                 .get("/vacation/holiday/{holidayId}", mock)
                 // 设置返回值类型为utf-8，否则默认为ISO-8859-1
                 .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
                 .param("holidayId", String.valueOf(53L))
-                .header("authorization", "Bearer " + token)
-                .requestAttr("token", token)
-        )
-                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(200))
-//                .andExpect(jsonPath("$..holidayId").value(mock))
-                .andDo(MockMvcResultHandlers.print())
-                .andReturn()
-                .getResponse();
-
-//        String result = response.getContentAsString();
-//        Holiday holiday = JSON.toJavaObject(JSON.parseObject(result).getJSONObject("data"),
-//                Holiday.class);
-
-//        Assert.assertEquals(mock, holiday.getHolidayId());
-    }
-
-    /**
-     * Method: hasNext(@PathVariable("holidayId") Long holidayId)
-     */
-    @Test
-    public void testHasNext() throws Exception {
-        Long mock = 1463544612969910272L;
-
-        MockHttpServletResponse response = mvc.perform(MockMvcRequestBuilders
-                .get("/vacation/holiday/next/{holidayId}", mock)
                 .header("authorization", "Bearer " + token)
                 .requestAttr("token", token)
         )
@@ -194,7 +147,7 @@ public class HolidayControllerTest {
      * Method: queryList(Holiday holiday)
      */
     @Test
-    public void testQueryList() throws Exception {
+    public void test2QueryList() throws Exception {
         Long holidayTypeId = 33L;
 
         MockHttpServletResponse response = mvc.perform(MockMvcRequestBuilders
@@ -221,7 +174,7 @@ public class HolidayControllerTest {
      * Method: queryApprovalList(Holiday holiday)
      */
     @Test
-    public void testQueryApprovalList() throws Exception {
+    public void test3QueryApprovalList() throws Exception {
         Long holidayTypeId = 33L;
 
         MockHttpServletResponse response = mvc.perform(MockMvcRequestBuilders
@@ -248,10 +201,10 @@ public class HolidayControllerTest {
      * Method: queryUserList(Holiday holiday)
      */
     @Test
-    public void testQueryUserList() throws Exception {
+    public void test4QueryUserList() throws Exception {
         login(RoleType.STAFF);
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        params.add("holidayTypeId", "31");
+        params.add("holidayTypeId", "33");
         params.add("currentApprovedIndex", "1");
 
         MockHttpServletResponse response = mvc.perform(MockMvcRequestBuilders
@@ -275,7 +228,7 @@ public class HolidayControllerTest {
      * Method: addHoliday(@RequestBody Holiday holiday)
      */
     @Test
-    public void testAddHoliday() throws Exception {
+    public void test5AddHoliday() throws Exception {
         login(RoleType.STAFF);
 
         Holiday mock = Holiday.builder()
@@ -289,7 +242,7 @@ public class HolidayControllerTest {
         ObjectMapper objectMapper = new ObjectMapper();
         String requestBody = objectMapper.writeValueAsString(mock);
 
-        MockHttpServletResponse response = mvc.perform(MockMvcRequestBuilders
+        mvc.perform(MockMvcRequestBuilders
                 .post("/vacation/holiday")
                 .header("authorization", "Bearer " + token)
                 .requestAttr("token", token)
@@ -303,13 +256,35 @@ public class HolidayControllerTest {
     }
 
     /**
+     * Method: hasNext(@PathVariable("holidayId") Long holidayId)
+     */
+    @Test
+    public void test6HasNext() throws Exception {
+        Long holidayTypeId = 33L;
+        Long mock = getMockId(holidayTypeId);
+
+        mvc.perform(MockMvcRequestBuilders
+                .get("/vacation/holiday/next/{holidayId}", mock)
+                .header("authorization", "Bearer " + token)
+                .requestAttr("token", token)
+        )
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(200))
+                .andDo(MockMvcResultHandlers.print())
+                .andReturn()
+                .getResponse();
+    }
+
+    /**
      * Method: modifyHoliday(@RequestBody Holiday holiday)
      */
     @Test
-    public void testModifyHoliday() throws Exception {
+    public void test7ModifyHoliday() throws Exception {
+        Long holidayTypeId = 33L;
+        Long mockId = getMockId(holidayTypeId);
+
         login(RoleType.MANAGER);
         Holiday mock = Holiday.builder()
-                .holidayId(1470685235363581952L)
+                .holidayId(mockId)
                 .holidayTypeId(33L)
                 .currentApprovedIndex(1)
                 .proposerId(2L) // Olajuwon
@@ -335,7 +310,7 @@ public class HolidayControllerTest {
 
         login(RoleType.BOSS);
         mock = Holiday.builder()
-                .holidayId(1470685235363581952L)
+                .holidayId(mockId)
                 .holidayTypeId(33L)
                 .currentApprovedIndex(2)
                 .proposerId(2L) // Olajuwon
@@ -362,11 +337,12 @@ public class HolidayControllerTest {
      * Method: deleteById(@PathVariable("holidayId") Long holidayId)
      */
     @Test
-    public void testDeleteById() throws Exception {
-        Long mock = 1470685235363581952L;
+    public void test8DeleteById() throws Exception {
+        Long holidayTypeId = 33L;
+        Long mockId = getMockId(holidayTypeId);
 
         mvc.perform(MockMvcRequestBuilders
-                .delete("/vacation/holiday/{holidayId}", mock)
+                .delete("/vacation/holiday/{holidayId}", mockId)
                 // 设置返回值类型为utf-8，否则默认为ISO-8859-1
                 .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
                 .header("authorization", "Bearer " + token)
@@ -379,7 +355,7 @@ public class HolidayControllerTest {
     }
 
     /* Other Method */
-    public void login(RoleType type) {
+    private void login(RoleType type) {
         // Get Authentication for the Current User
         String username;
         String password;
@@ -452,9 +428,24 @@ public class HolidayControllerTest {
         RoleType(int value) {
             this.value = value;
         }
+    }
 
-        public Integer getValue() {
-            return value;
-        }
+    private Long getMockId(Long holidayTypeId) throws Exception {
+        MockHttpServletResponse response = mvc.perform(MockMvcRequestBuilders
+                .get("/vacation/holiday/list")
+                .header("authorization", "Bearer " + token)
+                .requestAttr("token", token)
+                .param("holidayTypeId", String.valueOf(holidayTypeId))
+                .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
+        )
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(200))
+                .andDo(MockMvcResultHandlers.print())
+                .andReturn()
+                .getResponse();
+
+        String result = response.getContentAsString();
+        JSONArray array = (JSONArray) JSON.parseObject(result).get("rows");
+
+        return JSON.toJavaObject((JSONObject) array.get(array.size() - 1), Holiday.class).getHolidayId();
     }
 }
